@@ -8,34 +8,51 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
 
-    @Autowired
     private TaskService taskService;
 
+    @Autowired
+    public TaskController(TaskService taskService){
+        this.taskService=taskService;
+    }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public List<Task> getTasks() {
+        return taskService.getAll();
     }
-
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable int id) {
-        Task task = taskService.getTaskById(id);
-        if (task != null){
-            return ResponseEntity.ok(task);
+    public ResponseEntity<Task> getTaskById(@PathVariable Integer id) {
+        return taskService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/add")
+    public Task addTask(@RequestBody Task task){
+        return taskService.addTask(task);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTest(@PathVariable Integer id){
+        if (!taskService.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
-    }
-
-    @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        return taskService.createTask(task);
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
     }
 
 
+    }
 
-}
+
+
+
+
+
+
+
