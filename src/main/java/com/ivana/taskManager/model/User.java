@@ -2,14 +2,12 @@ package com.ivana.taskManager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import com.ivana.taskManager.ENUM.Role;
 
 
 @Entity
-@AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -17,21 +15,29 @@ import lombok.Setter;
 public class User {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
-    @Column
+    @Column(name="user_id")
     private int id;
 
     @Column
     @JsonProperty("userName")
+    @NonNull
     private int userName;
 
     @Column
     @JsonProperty("email")
+    @NonNull
     private String email;
 
     @Column
     @JsonProperty("password")
+    @NonNull
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    @JsonProperty("role")
+    @NonNull
+    private Role role;
 }

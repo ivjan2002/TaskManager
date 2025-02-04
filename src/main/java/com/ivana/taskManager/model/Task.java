@@ -2,17 +2,16 @@ package com.ivana.taskManager.model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ivana.taskManager.ENUM.TaskPriority;
+import com.ivana.taskManager.ENUM.TaskStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 import java.util.Date;
 
 @Entity
-@AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -20,32 +19,53 @@ import java.util.Date;
 public class Task {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
-    @Column
+    @Column(name="task_id")
     private int id;
 
     @Column
     @JsonProperty("taskName")
+    @NonNull
     private String taskName;
 
     @Column
     @JsonProperty("description")
+    @NonNull
     private String description;
 
     @Column
     @JsonProperty("startDate")
+    @NonNull
     private Date startDate;
 
     @Column
     @JsonProperty("endDate")
+    @NonNull
     private Date endDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    @JsonProperty("taskPriority")
+    @NonNull
+    private TaskPriority taskPriority;
 
-    //private int userId;
+    @Enumerated(EnumType.STRING)
+    @Column
+    @JsonProperty("taskStatus")
+    @NonNull
+    private TaskStatus taskStatus;
+
+    @ManyToOne
+    @JoinColumn(name="project_id",nullable=false)
+    private Project project;
+
+    @ManyToOne
+    @JoinColumn(name="user_id",nullable = false)
+    private User user;
 
 
-    //private int projectId;
+
 
 
 
