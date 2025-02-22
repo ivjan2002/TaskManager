@@ -17,6 +17,7 @@ public class TaskService {
 
     @Autowired
     public TaskService(TaskRepository taskRepository){
+
         this.taskRepository=taskRepository;
     }
 
@@ -26,19 +27,34 @@ public class TaskService {
     }
 
     public Optional<Task> findById(Integer id) {
+
         return taskRepository.findById(id);
     }
 
     public Task addTask(Task task) {
+
         return taskRepository.save(task);
     }
 
     public void deleteTask(Integer id) {
+
         taskRepository.deleteById(id);
     }
 
     public boolean existsById(Integer id) {
+
         return taskRepository.existsById(id);
+    }
+
+    public Task updateTask(Integer id,Task updatedTask){
+        if(taskRepository.existsById(id)){
+            updatedTask.setId(id);
+            return taskRepository.save(updatedTask);
+        }
+        else{
+            throw new IllegalArgumentException("Task with ID " + id + " does not exist.");
+        }
+
     }
 
 

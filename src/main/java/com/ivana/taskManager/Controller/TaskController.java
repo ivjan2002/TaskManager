@@ -46,6 +46,17 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Integer id,@RequestBody Task updatedTask){
+        try{
+            Task task=taskService.updateTask(id,updatedTask);
+            return ResponseEntity.ok(updatedTask);
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     }
 

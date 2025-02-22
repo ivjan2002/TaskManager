@@ -42,4 +42,8 @@ public class Project {
     @JsonProperty("endDate")
     @NonNull
     private Date endDate;
+
+    public void setId(int id){
+        this.id=id;
+    }
 }

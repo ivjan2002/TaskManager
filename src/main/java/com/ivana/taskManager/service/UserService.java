@@ -17,26 +17,42 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository){
+
         this.userRepository=userRepository;
     }
 
     public List<User> getUsers(){
+
         return userRepository.findAll();
     }
 
     public Optional<User> findById(Integer id) {
+
         return userRepository.findById(id);
     }
 
     public User addUser(User user){
+
         return userRepository.save(user);
     }
 
-    public boolean existsById(Integer id){ return userRepository.existsById(id);}
+    public boolean existsById(Integer id){
+        return userRepository.existsById(id);}
 
-    public void deleteUser(Integer id){ userRepository.deleteById(id);
+    public void deleteUser(Integer id){
+
+        userRepository.deleteById(id);
     }
 
+    public User updateUser(Integer id,User updateduser){
+        if(userRepository.existsById(id)){
+            updateduser.setId(id);
+            return userRepository.save(updateduser);
+        }
+        else{
+            throw new IllegalArgumentException("User with ID " + id + " does not exist.");
+        }
+    }
 
 
 }

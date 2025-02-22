@@ -40,4 +40,8 @@ public class User {
     @JsonProperty("role")
     @NonNull
     private Role role;
+
+    public void setId(int id){
+        this.id=id;
+    }
 }

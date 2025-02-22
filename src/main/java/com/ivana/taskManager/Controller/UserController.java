@@ -37,7 +37,7 @@ public class UserController {
         return userService.addUser(user);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Integer id){
         if(!userService.existsById(id)){
             return ResponseEntity.notFound().build();
@@ -46,6 +46,18 @@ public class UserController {
         return ResponseEntity.noContent().build();
 
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<User> updateUser(@PathVariable int id,@RequestBody User updatedUser){
+        try{
+            User user=userService.updateUser(id,updatedUser);
+            return ResponseEntity.ok(user);
+
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
 
