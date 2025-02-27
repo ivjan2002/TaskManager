@@ -1,5 +1,6 @@
 package com.ivana.taskManager.Controller;
 
+import com.ivana.taskManager.ENUM.TaskStatus;
 import com.ivana.taskManager.model.Task;
 import com.ivana.taskManager.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;

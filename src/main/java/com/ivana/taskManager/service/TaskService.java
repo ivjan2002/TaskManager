@@ -1,5 +1,6 @@
 package com.ivana.taskManager.service;
 
+import com.ivana.taskManager.ENUM.TaskStatus;
 import com.ivana.taskManager.model.Task;
 import com.ivana.taskManager.repository.TaskRepository;
 import jakarta.transaction.Transactional;
@@ -56,8 +57,5 @@ public class TaskService {
         }
 
     }
-
-
-
 
 }

@@ -56,6 +56,7 @@ public class Task {
     @NonNull
     private TaskStatus taskStatus;
 
+
 //    @ManyToOne
 //    @JoinColumn(name="project_id",nullable=false)
 //    @JsonProperty("project")
