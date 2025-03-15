@@ -58,4 +58,17 @@ public class TaskService {
 
     }
 
+    @Transactional
+    public void updateTaskStatus(int taskId, TaskStatus newStatus) {
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+
+        if (taskOptional.isPresent()) {
+            Task task = taskOptional.get();
+            task.setTaskStatus(newStatus);
+            taskRepository.save(task);
+        } else {
+            throw new IllegalArgumentException("Task with ID " + taskId + " not found");
+        }
+    }
+
 }

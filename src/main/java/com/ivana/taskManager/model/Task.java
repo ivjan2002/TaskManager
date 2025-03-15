@@ -24,6 +24,10 @@ public class Task {
     @Column(name="task_id")
     private int id;
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Column
     @JsonProperty("taskName")
     @NonNull
@@ -56,6 +60,14 @@ public class Task {
     @NonNull
     private TaskStatus taskStatus;
 
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
+
+
+
+
 
 //    @ManyToOne
 //    @JoinColumn(name="project_id",nullable=false)
@@ -67,9 +79,7 @@ public class Task {
 //    @JsonProperty("user")
 //    private User user;
 
-    public void setId(int id){
-        this.id=id;
-    }
+
 
 
 
