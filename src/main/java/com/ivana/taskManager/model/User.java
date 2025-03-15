@@ -23,7 +23,7 @@ public class User {
     @Column
     @JsonProperty("userName")
     @NonNull
-    private int userName;
+    private String userName;
 
     @Column
     @JsonProperty("email")
@@ -34,6 +34,15 @@ public class User {
     @JsonProperty("password")
     @NonNull
     private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     @Enumerated(EnumType.STRING)
     @Column

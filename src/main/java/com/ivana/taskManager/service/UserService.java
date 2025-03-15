@@ -5,6 +5,8 @@ import com.ivana.taskManager.model.User;
 import com.ivana.taskManager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +33,12 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User addUser(User user){
+    public User addUser(User user) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+
+        user.setPassword(hashedPassword);
 
         return userRepository.save(user);
     }
