@@ -3,6 +3,7 @@ package com.ivana.taskManager.service;
 import com.ivana.taskManager.model.Task;
 import com.ivana.taskManager.model.User;
 import com.ivana.taskManager.repository.UserRepository;
+import com.ivana.taskManager.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -58,6 +59,24 @@ public class UserService {
         }
         else{
             throw new IllegalArgumentException("User with ID " + id + " does not exist.");
+        }
+    }
+
+    public String login(String userName, String password) {
+        Optional<User> userOptional = userRepository.findByUserName(userName);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            JWTUtil jwtUtil=new JWTUtil();
+
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return jwtUtil.generateToken(userName);
+            } else {
+                throw new RuntimeException("Invalid password");
+            }
+        } else {
+            throw new RuntimeException("User not found");
         }
     }
 

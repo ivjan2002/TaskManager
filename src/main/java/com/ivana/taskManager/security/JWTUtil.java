@@ -10,8 +10,8 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    @Value("${secretKey}")
-    private String secretKey;
+    //@Value("${secretKey}")
+    private String secretKey="tajnikljuc123";
 
     private int EXPIRATION_TIME=86400000;
 

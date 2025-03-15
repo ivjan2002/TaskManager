@@ -58,6 +58,16 @@ public class UserController {
         }
     }
 
+    @PostMapping("auth/login")
+    public ResponseEntity<String> login(@RequestParam String userName, @RequestParam String password) {
+        try {
+            String token = userService.login(userName, password);
+            return ResponseEntity.ok(token);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
 
 
 
