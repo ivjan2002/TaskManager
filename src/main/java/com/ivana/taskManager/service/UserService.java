@@ -19,6 +19,9 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private JWTUtil jwtUtil;
+
+    @Autowired
     public UserService(UserRepository userRepository){
 
         this.userRepository=userRepository;
@@ -68,7 +71,6 @@ public class UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            JWTUtil jwtUtil=new JWTUtil();
 
             if (passwordEncoder.matches(password, user.getPassword())) {
                 return jwtUtil.generateToken(userName);
@@ -77,6 +79,25 @@ public class UserService {
             }
         } else {
             throw new RuntimeException("User not found");
+        }
+    }
+
+    public void changePassword(Integer id, String oldPassword, String newPassword) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+            if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+                String hashedNewPassword = passwordEncoder.encode(newPassword);
+                user.setPassword(hashedNewPassword);
+                userRepository.save(user);
+            } else {
+                throw new IllegalArgumentException("Old password is incorrect");
+            }
+        } else {
+            throw new IllegalArgumentException("User not found");
         }
     }
 

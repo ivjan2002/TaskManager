@@ -58,7 +58,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("auth/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<String> login(@RequestParam String userName, @RequestParam String password) {
         try {
             String token = userService.login(userName, password);
@@ -67,6 +67,20 @@ public class UserController {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
+
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<String> changePassword(
+            @PathVariable Integer id,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword) {
+        try {
+            userService.changePassword(id, oldPassword, newPassword);
+            return ResponseEntity.ok("Password changed successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 
 
