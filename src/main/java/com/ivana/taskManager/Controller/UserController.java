@@ -2,12 +2,13 @@ package com.ivana.taskManager.Controller;
 
 
 import com.ivana.taskManager.model.User;
+import com.ivana.taskManager.security.JwtUtils;
 import com.ivana.taskManager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -17,7 +18,9 @@ public class UserController {
 
     @Autowired
     public UserController(UserService userService){
+
         this.userService=userService;
+
     }
 
     @GetMapping
@@ -58,15 +61,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/auth/login")
-    public ResponseEntity<String> login(@RequestParam String userName, @RequestParam String password) {
-        try {
-            String token = userService.login(userName, password);
-            return ResponseEntity.ok(token);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
-    }
+
 
     @PutMapping("/{id}/change-password")
     public ResponseEntity<String> changePassword(
@@ -81,8 +76,13 @@ public class UserController {
         }
     }
 
-
-
+    @PostMapping("/auth/login")
+    public String login(@RequestParam String userName, @RequestParam String password) {
+        if (userService.validateUser(userName, password)) {
+            return "Login successful";
+        }
+        return "Invalid credentials";
+    }
 
 
 

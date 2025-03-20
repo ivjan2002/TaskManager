@@ -3,7 +3,7 @@ package com.ivana.taskManager.service;
 import com.ivana.taskManager.model.Task;
 import com.ivana.taskManager.model.User;
 import com.ivana.taskManager.repository.UserRepository;
-import com.ivana.taskManager.security.JWTUtil;
+import com.ivana.taskManager.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,8 +18,6 @@ public class UserService {
 
     private UserRepository userRepository;
 
-    @Autowired
-    private JWTUtil jwtUtil;
 
     @Autowired
     public UserService(UserRepository userRepository){
@@ -65,22 +63,6 @@ public class UserService {
         }
     }
 
-    public String login(String userName, String password) {
-        Optional<User> userOptional = userRepository.findByUserName(userName);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return jwtUtil.generateToken(userName);
-            } else {
-                throw new RuntimeException("Invalid password");
-            }
-        } else {
-            throw new RuntimeException("User not found");
-        }
-    }
 
     public void changePassword(Integer id, String oldPassword, String newPassword) {
         Optional<User> userOptional = userRepository.findById(id);
@@ -101,5 +83,21 @@ public class UserService {
         }
     }
 
+    public boolean validateUser(String userName, String password) {
+        // Pronalazimo korisnika po korisničkom imenu
+        User user = userRepository.findByUserName(userName);
+
+        // Ako korisnik postoji, proveravamo lozinku
+        if (user != null) {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+            // Upoređujemo šifrovanu lozinku iz baze sa unesenom lozinkom
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return true;  // Lozinke se poklapaju
+            }
+        }
+
+        return false;  // Lozinke se ne poklapaju ili korisnik ne postoji
+    }
 
 }
