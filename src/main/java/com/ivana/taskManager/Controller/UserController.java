@@ -14,13 +14,13 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
+    private final JwtUtils jwtUtils;
 
     @Autowired
-    public UserController(UserService userService){
-
-        this.userService=userService;
-
+    public UserController(UserService userService, JwtUtils jwtUtils) { // Spring automatski autowire-uje ove zavisnosti
+        this.userService = userService;
+        this.jwtUtils = jwtUtils;
     }
 
     @GetMapping
@@ -79,7 +79,9 @@ public class UserController {
     @PostMapping("/auth/login")
     public String login(@RequestParam String userName, @RequestParam String password) {
         if (userService.validateUser(userName, password)) {
-            return "Login successful";
+            // Generiši JWT token za korisnika
+            String token = jwtUtils.generateToken(userName);
+            return "Bearer " + token;
         }
         return "Invalid credentials";
     }

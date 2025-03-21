@@ -84,20 +84,17 @@ public class UserService {
     }
 
     public boolean validateUser(String userName, String password) {
-        // Pronalazimo korisnika po korisničkom imenu
         User user = userRepository.findByUserName(userName);
 
-        // Ako korisnik postoji, proveravamo lozinku
         if (user != null) {
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-            // Upoređujemo šifrovanu lozinku iz baze sa unesenom lozinkom
             if (passwordEncoder.matches(password, user.getPassword())) {
-                return true;  // Lozinke se poklapaju
+                return true;
             }
         }
 
-        return false;  // Lozinke se ne poklapaju ili korisnik ne postoji
+        return false;
     }
 
 }
