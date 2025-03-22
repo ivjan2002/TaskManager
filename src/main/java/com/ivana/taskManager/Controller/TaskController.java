@@ -39,10 +39,18 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Integer id) {
-        return taskService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> getTaskById(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
+        try {
+            if (!jwtUtils.validateJwtToken(token.substring(7))) {
+                return ResponseEntity.status(401).body("Invalid token");
+            }
+
+            return taskService.findById(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
     }
 
     @PostMapping("/add")

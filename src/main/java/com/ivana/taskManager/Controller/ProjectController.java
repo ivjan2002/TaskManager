@@ -39,11 +39,21 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Project> getProject(@PathVariable Integer id){
-        return projectService.getProjectById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> getProject(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
+        try {
+
+            if (!jwtUtils.validateJwtToken(token.substring(7))) {
+                return ResponseEntity.status(401).body("Invalid token");
+            }
+
+            return projectService.getProjectById(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
     }
+
 
     @PostMapping("/addProject")
     public ResponseEntity<?> add(@RequestBody Project project, @RequestHeader("Authorization") String token) {
