@@ -2,6 +2,7 @@ package com.ivana.taskManager.Controller;
 
 import com.ivana.taskManager.ENUM.TaskStatus;
 import com.ivana.taskManager.model.Task;
+import com.ivana.taskManager.security.JwtUtils;
 import com.ivana.taskManager.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +16,26 @@ import java.util.List;
 public class TaskController {
 
     private TaskService taskService;
+    private JwtUtils jwtUtils;
 
     @Autowired
-    public TaskController(TaskService taskService){
+    public TaskController(TaskService taskService,JwtUtils jwtUtils){
         this.taskService=taskService;
+        this.jwtUtils=jwtUtils;
     }
 
     @GetMapping
-    public List<Task> getTasks() {
-        return taskService.getAll();
+    public ResponseEntity<?> getTasks(@RequestHeader("Authorization") String token) {
+        try {
+            if (!jwtUtils.validateJwtToken(token.substring(7))) {
+                return ResponseEntity.status(401).body("Invalid token");
+            }
+
+            List<Task> tasks = taskService.getAll();
+            return ResponseEntity.ok(tasks);
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
     }
 
     @GetMapping("/{id}")

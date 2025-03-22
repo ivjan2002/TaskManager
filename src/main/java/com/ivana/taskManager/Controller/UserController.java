@@ -24,8 +24,17 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers(){
-        return userService.getUsers();
+    public ResponseEntity<?> getAllUsers(@RequestHeader("Authorization") String token) {
+        try {
+            if (!jwtUtils.validateJwtToken(token.substring(7))) {
+                return ResponseEntity.status(401).body("Invalid token");
+            }
+
+            List<User> users = userService.getUsers();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
     }
 
     @GetMapping("/{id}")

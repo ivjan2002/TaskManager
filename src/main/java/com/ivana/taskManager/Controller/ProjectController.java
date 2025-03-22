@@ -1,6 +1,7 @@
 package com.ivana.taskManager.Controller;
 
 import com.ivana.taskManager.model.Project;
+import com.ivana.taskManager.security.JwtUtils;
 import com.ivana.taskManager.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +14,28 @@ import java.util.List;
 public class ProjectController {
 
     private ProjectService projectService;
+    private JwtUtils jwtUtils;
 
 
     @Autowired
-    public ProjectController(ProjectService projectService){
+    public ProjectController(ProjectService projectService,JwtUtils jwtUtils){
+
         this.projectService=projectService;
+        this.jwtUtils=jwtUtils;
     }
 
     @GetMapping
-    public List<Project> getProjects(){
-        return projectService.getAllProjects();
+    public ResponseEntity<?> getProjects(@RequestHeader("Authorization") String token) {
+        try {
+            if (!jwtUtils.validateJwtToken(token.substring(7))) {
+                return ResponseEntity.status(401).body("Invalid token");
+            }
+
+            List<Project> projects = projectService.getAllProjects();
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
     }
 
     @GetMapping("/{id}")
