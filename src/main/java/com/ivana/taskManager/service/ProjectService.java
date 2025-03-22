@@ -3,6 +3,7 @@ package com.ivana.taskManager.service;
 
 import com.ivana.taskManager.model.Project;
 import com.ivana.taskManager.repository.ProjectRepository;
+import com.ivana.taskManager.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,15 +14,24 @@ import java.util.Optional;
 public class ProjectService {
 
     private ProjectRepository projectRepository;
+    private JwtUtils jwtUtils;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository){
+    public ProjectService(ProjectRepository projectRepository,JwtUtils jwtUtils){
         this.projectRepository=projectRepository;
+        this.jwtUtils=jwtUtils;
 
     }
 
-    public Project addProject(Project project){
+    private boolean isAdmin(String token) {
+        String role = jwtUtils.getRoleFromToken(token);
+        return "ADMIN".equals(role);
+    }
 
+    public Project addProject(Project project, String token){
+        if (!isAdmin(token)) {
+            throw new SecurityException("Only admin can add projects");
+        }
         return projectRepository.save(project);
     }
 
@@ -35,7 +45,10 @@ public class ProjectService {
                 projectRepository.findById(id);
     }
 
-    public void deleteProjectById(Integer id){
+    public void deleteProjectById(Integer id, String token){
+        if (!isAdmin(token)) {
+            throw new SecurityException("Only admin can delete projects");
+        }
         projectRepository.deleteById(id);
     }
 
@@ -44,7 +57,11 @@ public class ProjectService {
         return projectRepository.existsById(id);
     }
 
-    public Project updateProject(Integer id, Project updatedProject) {
+    public Project updateProject(Integer id, Project updatedProject, String token) {
+        if (!isAdmin(token)) {
+            throw new SecurityException("Only admin can update projects");
+        }
+
         if (projectRepository.existsById(id)) {
             updatedProject.setId(id);
             return projectRepository.save(updatedProject);

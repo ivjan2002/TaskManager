@@ -33,26 +33,33 @@ public class ProjectController {
     }
 
     @PostMapping("/addProject")
-    public Project add(@RequestBody Project project){
-        return projectService.addProject(project);
+    public ResponseEntity<?> add(@RequestBody Project project, @RequestHeader("Authorization") String token) {
+        try {
+            return ResponseEntity.ok(projectService.addProject(project, token.substring(7)));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).body("Access denied: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Integer id){
+    public ResponseEntity<Void> deleteProject(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
         if(!projectService.existById(id)){
             return ResponseEntity.notFound().build();
         }
-        projectService.deleteProjectById(id);
-        return ResponseEntity.noContent().build();
+        try {
+            projectService.deleteProjectById(id, token.substring(7));
+            return ResponseEntity.noContent().build();
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Integer id, @RequestBody Project updatedProject) {
+    public ResponseEntity<?> updateProject(@PathVariable Integer id, @RequestBody Project updatedProject, @RequestHeader("Authorization") String token) {
         try {
-            Project project = projectService.updateProject(id, updatedProject);
-            return ResponseEntity.ok(project);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(projectService.updateProject(id, updatedProject, token.substring(7))); // Isečemo "Bearer " iz tokena
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).body("Access denied: " + e.getMessage());
         }
     }
 

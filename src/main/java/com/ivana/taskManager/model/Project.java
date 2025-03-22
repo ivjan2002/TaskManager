@@ -23,7 +23,7 @@ public class Project {
     @Column
     @JsonProperty("projectName")
     @NonNull
-    private int projectName;
+    private String projectName;
 
 
     @Column
