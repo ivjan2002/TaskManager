@@ -36,28 +36,30 @@ public class UserController {
     }
 
     @PostMapping("/auth/register")
-    public User addUser(@RequestBody User user){
-        return userService.addUser(user);
+    public ResponseEntity<?> addUser(@RequestBody User user, @RequestHeader("Authorization") String token) {
+        try {
+            return ResponseEntity.ok(userService.addUser(user, token.substring(7)));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).body("Access denied: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable Integer id){
-        if(!userService.existsById(id)){
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteUserById(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
+        try {
+            userService.deleteUser(id, token.substring(7));
+            return ResponseEntity.noContent().build();
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).build();
         }
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<User> updateUser(@PathVariable int id,@RequestBody User updatedUser){
-        try{
-            User user=userService.updateUser(id,updatedUser);
-            return ResponseEntity.ok(user);
-
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.notFound().build();
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody User updatedUser, @RequestHeader("Authorization") String token) {
+        try {
+            return ResponseEntity.ok(userService.updateUser(id, updatedUser, token.substring(7)));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).body("Access denied: " + e.getMessage());
         }
     }
 

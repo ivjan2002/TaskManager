@@ -17,12 +17,19 @@ import java.util.Optional;
 public class UserService {
 
     private UserRepository userRepository;
+    private JwtUtils jwtUtils;
 
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, JwtUtils jwtUtils){
 
         this.userRepository=userRepository;
+        this.jwtUtils=jwtUtils;
+    }
+
+    private boolean isAdmin(String token) {
+        String role = jwtUtils.getRoleFromToken(token);
+        return "ADMIN".equals(role);
     }
 
     public List<User> getUsers(){
@@ -35,30 +42,36 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User addUser(User user) {
+    public User addUser(User user, String token) {
+        if (!isAdmin(token)) {
+            throw new SecurityException("Only admin can add users");
+        }
+
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
         String hashedPassword = passwordEncoder.encode(user.getPassword());
-
         user.setPassword(hashedPassword);
-
         return userRepository.save(user);
     }
 
     public boolean existsById(Integer id){
         return userRepository.existsById(id);}
 
-    public void deleteUser(Integer id){
-
+    public void deleteUser(Integer id, String token) {
+        if (!isAdmin(token)) {
+            throw new SecurityException("Only admin can delete users");
+        }
         userRepository.deleteById(id);
     }
 
-    public User updateUser(Integer id,User updateduser){
-        if(userRepository.existsById(id)){
-            updateduser.setId(id);
-            return userRepository.save(updateduser);
+    public User updateUser(Integer id, User updatedUser, String token) {
+        if (!isAdmin(token)) {
+            throw new SecurityException("Only admin can update users");
         }
-        else{
+
+        if (userRepository.existsById(id)) {
+            updatedUser.setId(id);
+            return userRepository.save(updatedUser);
+        } else {
             throw new IllegalArgumentException("User with ID " + id + " does not exist.");
         }
     }
