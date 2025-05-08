@@ -14,9 +14,6 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Show SSH Key for Debugging
-        run: echo "${{ secrets.SSH_PRIVATE_KEY }}"
-
       - name: Copy project files to EC2 server
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -34,5 +31,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/taskmanager-app
-            docker-compose down || true
-            docker-compose up --build -d
+            sudo docker-compose down || true
+            sudo docker-compose up --build -d
