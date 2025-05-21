@@ -1,5 +1,19 @@
 
 services:
+
+  db:
+    image: mysql:8.0
+    container_name: taskmanager_db
+    environment:
+      MYSQL_DATABASE: taskmanager
+      MYSQL_ROOT_PASSWORD: ""
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./data/taskmanager.sql:/docker-entrypoint-initdb.d/taskmanager.sql
+    networks:
+      - taskmanager_network
   backend:
     image: mybackendservice:latest
     container_name: backend_service
@@ -15,21 +29,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
     networks:
       - taskmanager_network
-
-  db:
-    image: mysql:8.0
-    container_name: taskmanager_db
-    environment:
-      MYSQL_DATABASE: taskmanager
-      MYSQL_ROOT_PASSWORD: ""
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./data/taskmanager.sql:/docker-entrypoint-initdb.d/taskmanager.sql
-    networks:
-      - taskmanager_network
-
 networks:
   taskmanager_network:
     driver: bridge
