@@ -5,8 +5,8 @@ services:
     image: mysql:8.0
     container_name: taskmanager_db
     environment:
-      MYSQL_DATABASE: taskmanager
-      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
