@@ -70,14 +70,14 @@ public class Task {
 
 
 
-    @ManyToOne
-    @JoinColumn(name="project_id",nullable=false)
-    @JsonProperty("project")
-    private Project project;
-
-    @ManyToOne
-    @JoinColumn(name="user_id",nullable = false)
-    @JsonProperty("user")
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name="project_id",nullable=false)
+//    @JsonProperty("project")
+//    private Project project;
+//
+//    @ManyToOne
+//    @JoinColumn(name="user_id",nullable = false)
+//    @JsonProperty("user")
+//    private User user;
 
 }
